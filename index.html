@@ -1,0 +1,1554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Meat Club | Strategic Decision Tool</title>
+  <style>
+    :root {
+      --bg: #070506;
+      --panel: #130b0e;
+      --panel-2: #1d1014;
+      --wine: #6e1628;
+      --wine-2: #9f2340;
+      --gold: #d8a247;
+      --amber: #f0bb5e;
+      --text: #fbf5ee;
+      --muted: #b6a8a0;
+      --line: rgba(255, 255, 255, 0.11);
+      --soft: rgba(255, 255, 255, 0.06);
+      --green: #4ec985;
+      --yellow: #e9bf54;
+      --red: #ef6767;
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+      --radius: 8px;
+      --max: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 18% 12%, rgba(159, 35, 64, 0.26), transparent 30%),
+        radial-gradient(circle at 80% 20%, rgba(216, 162, 71, 0.12), transparent 27%),
+        linear-gradient(145deg, #050404 0%, #10070a 42%, #050404 100%);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow-x: hidden;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      color: inherit;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .app-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      padding: 18px clamp(18px, 4vw, 46px) 12px;
+      background: rgba(7, 5, 6, 0.78);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar-row {
+      max-width: var(--max);
+      margin: 0 auto 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border: 1px solid rgba(216, 162, 71, 0.45);
+      background: linear-gradient(135deg, rgba(159, 35, 64, 0.95), rgba(15, 8, 10, 0.95));
+      display: grid;
+      place-items: center;
+      border-radius: var(--radius);
+      box-shadow: 0 12px 36px rgba(159, 35, 64, 0.22);
+      flex: 0 0 auto;
+    }
+
+    .brand-mark svg {
+      width: 22px;
+      height: 22px;
+      fill: none;
+      stroke: var(--amber);
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .brand-title {
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .brand-title strong {
+      font-size: 0.98rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .brand-title span {
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .progress-meta {
+      color: var(--muted);
+      font-size: 0.82rem;
+      white-space: nowrap;
+    }
+
+    .progress-track {
+      max-width: var(--max);
+      height: 5px;
+      margin: 0 auto;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--wine-2), var(--gold));
+      transition: width 260ms ease;
+    }
+
+    .deck {
+      width: 100%;
+      min-height: 0;
+      display: grid;
+      place-items: stretch;
+      padding: clamp(20px, 4vw, 42px);
+    }
+
+    .slide {
+      width: min(var(--max), 100%);
+      min-height: calc(100vh - 174px);
+      margin: 0 auto;
+      display: none;
+      align-content: center;
+      animation: slideIn 340ms ease both;
+    }
+
+    .slide.active {
+      display: grid;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero {
+      display: grid;
+      align-content: center;
+      gap: 28px;
+      max-width: 860px;
+    }
+
+    .eyebrow {
+      width: fit-content;
+      color: var(--amber);
+      letter-spacing: 0;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      border: 1px solid rgba(216, 162, 71, 0.35);
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: rgba(216, 162, 71, 0.08);
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: clamp(3.6rem, 9vw, 8.4rem);
+      line-height: 0.88;
+      letter-spacing: 0;
+      max-width: 920px;
+    }
+
+    h2 {
+      font-size: clamp(2.2rem, 5vw, 5.2rem);
+      line-height: 0.96;
+      letter-spacing: 0;
+      max-width: 900px;
+    }
+
+    h3 {
+      font-size: 1rem;
+      line-height: 1.25;
+    }
+
+    .subtitle {
+      color: #eadfd8;
+      font-size: clamp(1.12rem, 2.3vw, 1.65rem);
+      line-height: 1.45;
+      max-width: 720px;
+    }
+
+    .slide-header {
+      display: grid;
+      gap: 16px;
+      margin-bottom: clamp(24px, 4vw, 44px);
+    }
+
+    .slide-header p {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.6;
+      max-width: 780px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid.cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid.cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid.cols-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .card,
+    .choice,
+    .metric,
+    .phone-screen,
+    .backoffice-panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.035));
+      box-shadow: var(--shadow);
+    }
+
+    .card {
+      min-height: 142px;
+      padding: 22px;
+      display: grid;
+      align-content: space-between;
+      gap: 20px;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+
+    .card:hover,
+    .choice:hover {
+      transform: translateY(-3px);
+      border-color: rgba(216, 162, 71, 0.42);
+      background: linear-gradient(180deg, rgba(159, 35, 64, 0.18), rgba(255, 255, 255, 0.045));
+    }
+
+    .card-number {
+      color: var(--gold);
+      font-size: 0.78rem;
+    }
+
+    .card p {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.48;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .list-panel {
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(0, 0, 0, 0.18);
+    }
+
+    .list-panel h3 {
+      margin-bottom: 16px;
+      color: var(--amber);
+    }
+
+    .check-list {
+      display: grid;
+      gap: 10px;
+      color: #efe6df;
+    }
+
+    .check-list div {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      line-height: 1.35;
+    }
+
+    .check-list div::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      margin-top: 8px;
+      background: var(--gold);
+      border-radius: 999px;
+      flex: 0 0 auto;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .flow-step {
+      position: relative;
+      min-height: 116px;
+      padding: 18px 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.055);
+      display: grid;
+      align-content: center;
+      gap: 10px;
+      text-align: center;
+    }
+
+    .flow-step span {
+      color: var(--gold);
+      font-size: 0.78rem;
+    }
+
+    .choice {
+      min-height: 94px;
+      padding: 18px;
+      text-align: left;
+      display: grid;
+      gap: 8px;
+      align-content: center;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+
+    .choice.selected {
+      border-color: rgba(240, 187, 94, 0.86);
+      background: linear-gradient(180deg, rgba(159, 35, 64, 0.34), rgba(216, 162, 71, 0.10));
+      box-shadow: 0 18px 50px rgba(159, 35, 64, 0.22);
+    }
+
+    .choice small {
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .economics {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.9fr) minmax(300px, 1.1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .input-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .field input {
+      width: 100%;
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(0, 0, 0, 0.24);
+      padding: 12px 13px;
+      outline: none;
+      transition: border-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .field input:focus {
+      border-color: rgba(216, 162, 71, 0.7);
+      box-shadow: 0 0 0 3px rgba(216, 162, 71, 0.11);
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .metric {
+      min-height: 132px;
+      padding: 22px;
+      display: grid;
+      align-content: space-between;
+      gap: 18px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .metric strong {
+      font-size: clamp(1.7rem, 3.7vw, 3.1rem);
+      line-height: 1;
+    }
+
+    .health {
+      margin-top: 14px;
+      padding: 16px 18px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .health-dot {
+      width: 13px;
+      height: 13px;
+      border-radius: 999px;
+      background: var(--yellow);
+      box-shadow: 0 0 24px currentColor;
+    }
+
+    .health.healthy {
+      color: var(--green);
+      border-color: rgba(78, 201, 133, 0.35);
+    }
+
+    .health.attention {
+      color: var(--yellow);
+      border-color: rgba(233, 191, 84, 0.38);
+    }
+
+    .health.risky {
+      color: var(--red);
+      border-color: rgba(239, 103, 103, 0.4);
+    }
+
+    .mockups {
+      display: grid;
+      grid-template-columns: 0.85fr 1.15fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .phone {
+      max-width: 385px;
+      width: 100%;
+      justify-self: center;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 30px;
+      padding: 12px;
+      background: #050505;
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55);
+    }
+
+    .phone-screen {
+      min-height: 615px;
+      border-radius: 22px;
+      padding: 18px;
+      background:
+        linear-gradient(180deg, rgba(159, 35, 64, 0.28), rgba(8, 5, 6, 0.98)),
+        #0b0708;
+      box-shadow: none;
+      overflow: hidden;
+    }
+
+    .phone-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .app-section {
+      display: none;
+      gap: 12px;
+    }
+
+    .app-section.active {
+      display: grid;
+    }
+
+    .app-card {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.07);
+      padding: 15px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .app-card span {
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .app-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-top: 18px;
+    }
+
+    .tab {
+      min-height: 42px;
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid transparent;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .tab.active {
+      color: var(--text);
+      border-color: rgba(216, 162, 71, 0.48);
+      background: rgba(216, 162, 71, 0.12);
+    }
+
+    .backoffice-panel {
+      padding: 20px;
+      overflow: auto;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(120px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .dash-card {
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--line);
+      padding: 14px;
+      display: grid;
+      gap: 6px;
+      min-height: 86px;
+    }
+
+    .dash-card span {
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+
+    .dash-card strong {
+      font-size: 1.35rem;
+    }
+
+    .tables {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.84rem;
+      min-width: 420px;
+    }
+
+    th,
+    td {
+      text-align: left;
+      padding: 12px 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+      white-space: nowrap;
+    }
+
+    th {
+      color: var(--gold);
+      font-weight: 600;
+      font-size: 0.76rem;
+    }
+
+    td {
+      color: #eadfd8;
+    }
+
+    .plan-output {
+      min-height: 360px;
+      max-height: 52vh;
+      overflow: auto;
+      white-space: pre-wrap;
+      line-height: 1.55;
+      color: #f2e9e2;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(0, 0, 0, 0.24);
+      padding: 20px;
+    }
+
+    .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 18px;
+    }
+
+    .btn {
+      min-height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      border-radius: var(--radius);
+      padding: 0 18px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--line);
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      border-color: rgba(216, 162, 71, 0.45);
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .btn.primary {
+      color: #16090c;
+      font-weight: 750;
+      background: linear-gradient(135deg, var(--amber), var(--gold));
+      border-color: rgba(255, 255, 255, 0.18);
+      box-shadow: 0 18px 42px rgba(216, 162, 71, 0.2);
+    }
+
+    .btn.danger {
+      color: #ffd7d7;
+      border-color: rgba(239, 103, 103, 0.35);
+      background: rgba(239, 103, 103, 0.08);
+    }
+
+    .nav {
+      padding: 0 clamp(18px, 4vw, 46px) clamp(18px, 3vw, 32px);
+    }
+
+    .nav-row {
+      max-width: var(--max);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .nav-center {
+      color: var(--muted);
+      font-size: 0.86rem;
+      text-align: center;
+    }
+
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 86px;
+      z-index: 30;
+      max-width: calc(100vw - 40px);
+      padding: 13px 15px;
+      color: #16090c;
+      background: var(--amber);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      transform: translateY(18px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 960px) {
+      .grid.cols-4,
+      .grid.cols-3,
+      .flow,
+      .dashboard-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid.cols-2,
+      .split,
+      .economics,
+      .mockups,
+      .tables {
+        grid-template-columns: 1fr;
+      }
+
+      .phone {
+        max-width: 430px;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .topbar-row,
+      .nav-row {
+        align-items: stretch;
+      }
+
+      .topbar-row {
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: space-between;
+      }
+
+      .brand-title span {
+        display: none;
+      }
+
+      .deck {
+        padding: 22px 16px;
+      }
+
+      .slide {
+        min-height: calc(100vh - 220px);
+      }
+
+      .grid.cols-4,
+      .grid.cols-3,
+      .flow,
+      .dashboard-grid,
+      .metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .card,
+      .choice {
+        min-height: auto;
+      }
+
+      .phone-screen {
+        min-height: 570px;
+      }
+
+      .nav-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .nav-center {
+        grid-column: 1 / -1;
+        order: -1;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar-row">
+        <div class="brand" aria-label="Smart Meat Club">
+          <div class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M4.5 13.2c1.4-4.6 5.2-7.5 9.6-7.5 3.2 0 5.4 1.5 5.4 3.7 0 1.7-1.2 2.8-3.4 3.3-.9.2-1.4.8-1.7 1.8-.5 1.9-1.9 3.8-4.8 3.8-3.2 0-5.8-2.1-5.1-5.1Z" />
+              <path d="M9 10.2h.1M13.7 9.1h.1M8.8 15.3c1.7.7 3.1.4 4.2-.8" />
+            </svg>
+          </div>
+          <div class="brand-title">
+            <strong>Smart Meat Club</strong>
+            <span>Strategic decision tool</span>
+          </div>
+        </div>
+        <div class="top-actions">
+          <span class="progress-meta" id="progressMeta">Slide 1 of 14</span>
+          <button class="btn danger" id="resetBtn" type="button">Reset</button>
+        </div>
+      </div>
+      <div class="progress-track" aria-hidden="true">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </header>
+
+    <main class="deck" id="deck">
+      <section class="slide active" data-title="Start">
+        <div class="hero">
+          <div class="eyebrow">Partner workshop</div>
+          <h1>Smart Meat Club</h1>
+          <p class="subtitle">Carne inteligente. Você paga menos porque compra do jeito certo.</p>
+          <div class="action-row">
+            <button class="btn primary" type="button" data-go-next>Start Presentation</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Problem">
+        <div class="slide-header">
+          <div class="eyebrow">01 · Problem</div>
+          <h2>The retail meat gap is widening.</h2>
+          <p>Consumers feel the price pressure, while most subscription competitors sell convenience as a premium experience instead of a smarter way to buy.</p>
+        </div>
+        <div class="grid cols-4">
+          <article class="card"><span class="card-number">01</span><h3>Meat prices are rising</h3><p>Weekly grocery spend keeps climbing, making meat an obvious target for household savings.</p></article>
+          <article class="card"><span class="card-number">02</span><h3>Retail markup is high</h3><p>The customer pays for fragmentation, display, waste, and layers of convenience.</p></article>
+          <article class="card"><span class="card-number">03</span><h3>Competitors are premium</h3><p>Most subscription brands position around curation, not affordability.</p></article>
+          <article class="card"><span class="card-number">04</span><h3>Consumers need alternatives</h3><p>A practical purchase model can become the value proposition.</p></article>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Opportunity">
+        <div class="slide-header">
+          <div class="eyebrow">02 · Opportunity</div>
+          <h2>Cheaper supply plus predictable demand.</h2>
+          <p>The business can win by simplifying the offer, reducing waste, and matching supplier purchasing with subscriber demand.</p>
+        </div>
+        <div class="grid cols-3">
+          <article class="card"><span class="card-number">A</span><h3>Direct supplier access</h3><p>Start with one reliable supply path and negotiate around volume predictability.</p></article>
+          <article class="card"><span class="card-number">B</span><h3>Lower cost per pound</h3><p>Pass part of the savings to customers while preserving enough contribution margin.</p></article>
+          <article class="card"><span class="card-number">C</span><h3>Subscription model</h3><p>Recurring demand helps plan purchasing, packing, routes, and cash flow.</p></article>
+          <article class="card"><span class="card-number">D</span><h3>Predictable demand</h3><p>Order windows replace speculation with committed purchases.</p></article>
+          <article class="card"><span class="card-number">E</span><h3>Lean operation</h3><p>One cut, one region, tight cadence, and manual operations before scale.</p></article>
+          <article class="card"><span class="card-number">F</span><h3>Clear customer logic</h3><p>Customers save because they buy the right format, not because quality is lower.</p></article>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Definition">
+        <div class="slide-header">
+          <div class="eyebrow">03 · Strategic definition</div>
+          <h2>Sharper by deciding what it is not.</h2>
+          <p>Early discipline protects the concept from becoming an expensive grocery operation too soon.</p>
+        </div>
+        <div class="split">
+          <div class="list-panel">
+            <h3>Não é</h3>
+            <div class="check-list">
+              <div>Açougue online</div>
+              <div>App complexo no início</div>
+              <div>Produto premium gourmet</div>
+              <div>Venda avulsa</div>
+            </div>
+          </div>
+          <div class="list-panel">
+            <h3>É</h3>
+            <div class="check-list">
+              <div>Clube de compra</div>
+              <div>Assinatura</div>
+              <div>Peça inteira</div>
+              <div>Eficiência operacional</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Flow">
+        <div class="slide-header">
+          <div class="eyebrow">04 · How it works</div>
+          <h2>A tight weekly operating loop.</h2>
+          <p>The model only works if customer commitment, supplier purchasing, assembly, and delivery happen in a disciplined sequence.</p>
+        </div>
+        <div class="flow">
+          <div class="flow-step"><span>01</span><strong>Cliente assina</strong></div>
+          <div class="flow-step"><span>02</span><strong>Fechamento de pedidos</strong></div>
+          <div class="flow-step"><span>03</span><strong>Compra fornecedor</strong></div>
+          <div class="flow-step"><span>04</span><strong>Montagem</strong></div>
+          <div class="flow-step"><span>05</span><strong>Entrega programada</strong></div>
+          <div class="flow-step"><span>06</span><strong>Recorrência</strong></div>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Product">
+        <div class="slide-header">
+          <div class="eyebrow">05 · Product</div>
+          <h2>One box, one whole piece, one clear promise.</h2>
+          <p>Keep the first product operationally simple and easy for the customer to understand.</p>
+        </div>
+        <div class="grid cols-3">
+          <article class="card"><span class="card-number">Box</span><h3>1 peça inteira</h3><p>A whole cut creates the price logic and reduces handling complexity.</p></article>
+          <article class="card"><span class="card-number">Weight</span><h3>5–7 lbs média</h3><p>Large enough to matter, manageable enough for a household freezer.</p></article>
+          <article class="card"><span class="card-number">Cold</span><h3>Caixa com gel pack</h3><p>Basic cold-chain discipline without overbuilding logistics.</p></article>
+          <article class="card"><span class="card-number">Pack</span><h3>Embalagem original</h3><p>Preserve supplier efficiency and customer trust.</p></article>
+          <article class="card"><span class="card-number">Guide</span><h3>Cartão + QR code</h3><p>Teach storage, cutting, cooking, and value comparison.</p></article>
+          <article class="card"><span class="card-number">Promise</span><h3>Smart buying</h3><p>Less retail theater, more usable value per pound.</p></article>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Lean Mode">
+        <div class="slide-header">
+          <div class="eyebrow">06 · Lean mode</div>
+          <h2>Validate before building the machine.</h2>
+          <p>The first version should prove demand, price sensitivity, supplier reliability, and delivery cadence.</p>
+        </div>
+        <div class="grid cols-3">
+          <article class="card"><span class="card-number">Lean</span><h3>Sem estoque alto</h3><p>Buy against subscriber commitment wherever possible.</p></article>
+          <article class="card"><span class="card-number">Lean</span><h3>Sem estrutura grande</h3><p>Temporary processes are acceptable while demand is being tested.</p></article>
+          <article class="card"><span class="card-number">MVP</span><h3>App MVP via Vibe Coding</h3><p>Use simple technology to make the model tangible.</p></article>
+          <article class="card"><span class="card-number">Focus</span><h3>Foco em validação</h3><p>Measure willingness to subscribe, repeat, and refer.</p></article>
+          <article class="card"><span class="card-number">Scope</span><h3>1 corte, 1 região</h3><p>Constrain variation until operations are stable.</p></article>
+          <article class="card"><span class="card-number">Pilot</span><h3>30–50 clientes</h3><p>Enough to expose real issues without excessive complexity.</p></article>
+        </div>
+      </section>
+
+      <section class="slide decision-slide" data-title="Audience">
+        <div class="slide-header">
+          <div class="eyebrow">07 · Decision</div>
+          <h2>Who is the first customer?</h2>
+          <p>Multiple choices allowed. The sharper the pilot audience, the easier it is to choose product, message, route, and price.</p>
+        </div>
+        <div class="grid cols-3" data-decision="audience" data-multiple="true">
+          <button class="choice" type="button" data-value="American families"><strong>American families</strong><small>Household savings and predictable meals.</small></button>
+          <button class="choice" type="button" data-value="BBQ consumers"><strong>BBQ consumers</strong><small>High usage, easy meat education angle.</small></button>
+          <button class="choice" type="button" data-value="Budget-conscious"><strong>Budget-conscious</strong><small>The purest affordability thesis.</small></button>
+          <button class="choice" type="button" data-value="Fitness/protein"><strong>Fitness/protein</strong><small>Protein planning, macros, bulk buying.</small></button>
+          <button class="choice" type="button" data-value="Latino/Brazilian"><strong>Latino/Brazilian</strong><small>Cultural familiarity with larger cuts.</small></button>
+          <button class="choice" type="button" data-value="Mixed"><strong>Mixed</strong><small>Useful if the first test is relationship-led.</small></button>
+        </div>
+      </section>
+
+      <section class="slide decision-slide" data-title="Region">
+        <div class="slide-header">
+          <div class="eyebrow">08 · Decision</div>
+          <h2>Where should the first route run?</h2>
+          <p>Pick one launch area to keep delivery, feedback, and word-of-mouth concentrated.</p>
+        </div>
+        <div class="grid cols-3" data-decision="region">
+          <button class="choice" type="button" data-value="Orlando"><strong>Orlando</strong><small>Larger market, broader customer mix.</small></button>
+          <button class="choice" type="button" data-value="Kissimmee"><strong>Kissimmee</strong><small>Strong family and Latino/Brazilian fit.</small></button>
+          <button class="choice" type="button" data-value="Lake Nona"><strong>Lake Nona</strong><small>Higher-income, planned community behavior.</small></button>
+          <button class="choice" type="button" data-value="Windermere"><strong>Windermere</strong><small>Premium households, referral potential.</small></button>
+          <button class="choice" type="button" data-value="Other"><strong>Other</strong><small>Use if supplier or founder network points elsewhere.</small></button>
+        </div>
+      </section>
+
+      <section class="slide decision-slide" data-title="Cut">
+        <div class="slide-header">
+          <div class="eyebrow">09 · Decision</div>
+          <h2>Which cut should anchor the pilot?</h2>
+          <p>The first cut should balance supplier access, customer recognition, margin, and cooking confidence.</p>
+        </div>
+        <div class="grid cols-3" data-decision="cut">
+          <button class="choice" type="button" data-value="New York Strip"><strong>New York Strip</strong><small>Recognizable, strong steak identity.</small></button>
+          <button class="choice" type="button" data-value="Ribeye"><strong>Ribeye</strong><small>Popular, indulgent, margin sensitive.</small></button>
+          <button class="choice" type="button" data-value="Tenderloin"><strong>Tenderloin</strong><small>Premium perception, smaller affordability story.</small></button>
+          <button class="choice" type="button" data-value="Sirloin"><strong>Sirloin</strong><small>Value-oriented and accessible.</small></button>
+          <button class="choice" type="button" data-value="Brisket"><strong>Brisket</strong><small>BBQ-friendly, heavier education need.</small></button>
+          <button class="choice" type="button" data-value="Picanha"><strong>Picanha</strong><small>Brazilian hook, distinct positioning.</small></button>
+        </div>
+      </section>
+
+      <section class="slide decision-slide" data-title="Technology">
+        <div class="slide-header">
+          <div class="eyebrow">10 · Decision</div>
+          <h2>How much technology is enough?</h2>
+          <p>Choose the smallest tech surface that can collect payment, explain the product, and support repeat orders.</p>
+        </div>
+        <div class="grid cols-4" data-decision="technology">
+          <button class="choice" type="button" data-value="App MVP + Stripe"><strong>App MVP + Stripe</strong><small>Best demo of the future model.</small></button>
+          <button class="choice" type="button" data-value="App + manual ops"><strong>App + manual ops</strong><small>Polished customer layer, lean backend.</small></button>
+          <button class="choice" type="button" data-value="Web app"><strong>Web app</strong><small>Fast to build, easy to share.</small></button>
+          <button class="choice" type="button" data-value="Landing only"><strong>Landing only</strong><small>Good for demand capture before product ops.</small></button>
+        </div>
+      </section>
+
+      <section class="slide decision-slide" data-title="Pilot">
+        <div class="slide-header">
+          <div class="eyebrow">11 · Decision</div>
+          <h2>How many pilot subscribers?</h2>
+          <p>The goal is a pilot large enough to reveal economics and operational friction without pretending to be scale.</p>
+        </div>
+        <div class="grid cols-4" data-decision="pilotCustomers">
+          <button class="choice" type="button" data-value="20"><strong>20</strong><small>Very lean validation.</small></button>
+          <button class="choice" type="button" data-value="30"><strong>30</strong><small>Good first relationship-led test.</small></button>
+          <button class="choice" type="button" data-value="50"><strong>50</strong><small>Enough pressure to test operations.</small></button>
+          <button class="choice" type="button" data-value="100"><strong>100</strong><small>Stronger demand signal, higher risk.</small></button>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Unit Economics">
+        <div class="slide-header">
+          <div class="eyebrow">12 · Unit economics</div>
+          <h2>Model the box before scaling the club.</h2>
+          <p>Edit the assumptions live. The margin indicator updates instantly and the final plan uses these numbers.</p>
+        </div>
+        <div class="economics">
+          <div class="list-panel">
+            <h3>Inputs</h3>
+            <div class="input-grid">
+              <div class="field"><label for="cost_per_lb">Cost per lb</label><input id="cost_per_lb" type="number" step="0.01" min="0" data-econ="cost_per_lb" /></div>
+              <div class="field"><label for="sell_per_lb">Sell per lb</label><input id="sell_per_lb" type="number" step="0.01" min="0" data-econ="sell_per_lb" /></div>
+              <div class="field"><label for="avg_weight">Average weight</label><input id="avg_weight" type="number" step="0.1" min="0" data-econ="avg_weight" /></div>
+              <div class="field"><label for="packaging_cost">Packaging cost</label><input id="packaging_cost" type="number" step="0.01" min="0" data-econ="packaging_cost" /></div>
+              <div class="field"><label for="delivery_cost">Delivery cost</label><input id="delivery_cost" type="number" step="0.01" min="0" data-econ="delivery_cost" /></div>
+              <div class="field"><label for="payment_fee_percent">Payment fee %</label><input id="payment_fee_percent" type="number" step="0.1" min="0" data-econ="payment_fee_percent" /></div>
+              <div class="field"><label for="loss_percent">Loss %</label><input id="loss_percent" type="number" step="0.1" min="0" data-econ="loss_percent" /></div>
+            </div>
+          </div>
+          <div>
+            <div class="metrics">
+              <div class="metric"><span>Revenue per box</span><strong id="revenueMetric">$0</strong></div>
+              <div class="metric"><span>Total cost</span><strong id="costMetric">$0</strong></div>
+              <div class="metric"><span>Profit</span><strong id="profitMetric">$0</strong></div>
+              <div class="metric"><span>Margin %</span><strong id="marginMetric">0%</strong></div>
+            </div>
+            <div class="health attention" id="healthBox">
+              <strong id="healthLabel">Attention margin</strong>
+              <span class="health-dot"></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Costs">
+        <div class="slide-header">
+          <div class="eyebrow">13 · Cost map</div>
+          <h2>Every box carries visible and hidden costs.</h2>
+          <p>The decision is not only supplier price. The model must track all recurring friction before it scales.</p>
+        </div>
+        <div class="grid cols-3">
+          <article class="card"><span class="card-number">01</span><h3>Meat cost</h3><p>Core COGS and biggest margin driver.</p></article>
+          <article class="card"><span class="card-number">02</span><h3>Packaging</h3><p>Box, insulation, labels, printed inserts.</p></article>
+          <article class="card"><span class="card-number">03</span><h3>Gel pack</h3><p>Cold handling cost and customer confidence.</p></article>
+          <article class="card"><span class="card-number">04</span><h3>Delivery</h3><p>Route density, mileage, and time.</p></article>
+          <article class="card"><span class="card-number">05</span><h3>Payment fee</h3><p>Stripe or processor cost on every payment.</p></article>
+          <article class="card"><span class="card-number">06</span><h3>Loss</h3><p>Spoilage, refunds, weight variance, errors.</p></article>
+          <article class="card"><span class="card-number">07</span><h3>Storage</h3><p>Temporary cold storage before delivery.</p></article>
+          <article class="card"><span class="card-number">08</span><h3>Marketing</h3><p>Referral, creative, local ads, sampling.</p></article>
+          <article class="card"><span class="card-number">09</span><h3>Operations</h3><p>Labor, admin, support, routing, tracking.</p></article>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Mockups">
+        <div class="slide-header">
+          <div class="eyebrow">14 · Operating concept</div>
+          <h2>Customer app and backoffice mockup.</h2>
+          <p>These are not final product screens. They make the business workflow concrete enough for partners to discuss.</p>
+        </div>
+        <div class="mockups">
+          <div class="phone">
+            <div class="phone-screen">
+              <div class="phone-top"><span>9:41</span><strong>Smart Meat</strong><span>LTE</span></div>
+              <div class="app-section active" data-app-panel="home">
+                <h3>Home</h3>
+                <div class="app-card"><span>Next delivery</span><strong>Friday, 4:00–7:00 PM</strong></div>
+                <div class="app-card"><span>Current cut</span><strong id="mockCut">New York Strip</strong></div>
+                <div class="app-card"><span>Estimated weight</span><strong id="mockWeight">6.0 lbs</strong></div>
+                <div class="app-card"><span>Status</span><strong>Packing window opens soon</strong></div>
+              </div>
+              <div class="app-section" data-app-panel="subscription">
+                <h3>Subscription</h3>
+                <div class="app-card"><span>Plan</span><strong>Monthly Smart Box</strong></div>
+                <div class="app-card"><span>Cut</span><strong id="mockSubCut">New York Strip</strong></div>
+                <div class="app-card"><span>Delivery date</span><strong>Every 2nd Friday</strong></div>
+              </div>
+              <div class="app-section" data-app-panel="learn">
+                <h3>Learn</h3>
+                <div class="app-card"><span>Store</span><strong>Freeze portions in airtight bags</strong></div>
+                <div class="app-card"><span>Cut</span><strong>Slice against the grain</strong></div>
+                <div class="app-card"><span>Cook</span><strong>Season simply, rest before serving</strong></div>
+              </div>
+              <div class="app-section" data-app-panel="status">
+                <h3>Status</h3>
+                <div class="app-card"><span>Paid</span><strong>Complete</strong></div>
+                <div class="app-card"><span>Ordered</span><strong>Supplier order placed</strong></div>
+                <div class="app-card"><span>Packing</span><strong>Scheduled</strong></div>
+                <div class="app-card"><span>Delivered</span><strong>Pending</strong></div>
+              </div>
+              <div class="app-tabs">
+                <button class="tab active" type="button" data-app-tab="home">Home</button>
+                <button class="tab" type="button" data-app-tab="subscription">Sub</button>
+                <button class="tab" type="button" data-app-tab="learn">Learn</button>
+                <button class="tab" type="button" data-app-tab="status">Status</button>
+              </div>
+            </div>
+          </div>
+          <div class="backoffice-panel">
+            <div class="dashboard-grid">
+              <div class="dash-card"><span>Subscribers</span><strong id="dashSubscribers">50</strong></div>
+              <div class="dash-card"><span>Revenue</span><strong id="dashRevenue">$4.5k</strong></div>
+              <div class="dash-card"><span>Cost</span><strong id="dashCost">$2.8k</strong></div>
+              <div class="dash-card"><span>Margin</span><strong id="dashMargin">38%</strong></div>
+              <div class="dash-card"><span>Orders</span><strong id="dashOrders">50</strong></div>
+            </div>
+            <div class="tables">
+              <div class="backoffice-panel">
+                <table>
+                  <thead><tr><th>Customer</th><th>Cut</th><th>Status</th><th>Delivery</th></tr></thead>
+                  <tbody>
+                    <tr><td>Sarah M.</td><td id="rowCutA">NY Strip</td><td>Paid</td><td>Friday</td></tr>
+                    <tr><td>Rafael C.</td><td id="rowCutB">NY Strip</td><td>Ordered</td><td>Friday</td></tr>
+                    <tr><td>Mike T.</td><td id="rowCutC">NY Strip</td><td>Packing</td><td>Saturday</td></tr>
+                    <tr><td>Ana P.</td><td id="rowCutD">NY Strip</td><td>Delivered</td><td>Last cycle</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="backoffice-panel">
+                <table>
+                  <thead><tr><th>Cut</th><th>Cost</th><th>Price</th><th>Margin</th></tr></thead>
+                  <tbody>
+                    <tr><td id="unitCut">New York Strip</td><td id="unitCost">$9.00</td><td id="unitPrice">$14.90</td><td id="unitMargin">38%</td></tr>
+                    <tr><td>Sirloin</td><td>$7.80</td><td>$12.90</td><td>35%</td></tr>
+                    <tr><td>Picanha</td><td>$8.40</td><td>$14.50</td><td>39%</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Plan">
+        <div class="slide-header">
+          <div class="eyebrow">Final · Business plan</div>
+          <h2>Generate the consolidated plan.</h2>
+          <p>The plan uses the strategic choices, economics, margin status, and operating assumptions selected during the presentation.</p>
+        </div>
+        <div class="plan-output" id="planOutput">Click Generate Business Plan to consolidate the current decisions.</div>
+        <div class="action-row">
+          <button class="btn primary" type="button" id="generatePlanBtn">Generate Business Plan</button>
+          <button class="btn" type="button" id="copyPlanBtn">Copy Plan</button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="nav">
+      <div class="nav-row">
+        <button class="btn" id="prevBtn" type="button">Back</button>
+        <div class="nav-center" id="slideName">Start</div>
+        <button class="btn primary" id="nextBtn" type="button">Next</button>
+      </div>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">Saved</div>
+
+  <script>
+    const storageKey = "smartMeatClub.businessDecisions";
+
+    const defaultEconomics = {
+      cost_per_lb: 9,
+      sell_per_lb: 14.9,
+      avg_weight: 6,
+      packaging_cost: 8,
+      delivery_cost: 12,
+      payment_fee_percent: 3,
+      loss_percent: 5
+    };
+
+    window.businessDecisions = {
+      audience: [],
+      region: "",
+      cut: "",
+      technology: "",
+      pilotCustomers: "",
+      economics: { ...defaultEconomics },
+      calculations: {}
+    };
+
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const progressFill = document.getElementById("progressFill");
+    const progressMeta = document.getElementById("progressMeta");
+    const slideName = document.getElementById("slideName");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const toast = document.getElementById("toast");
+    const planOutput = document.getElementById("planOutput");
+    let currentSlide = 0;
+    let toastTimer;
+
+    function money(value) {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(Number.isFinite(value) ? value : 0);
+    }
+
+    function percent(value) {
+      return `${(Number.isFinite(value) ? value : 0).toFixed(1)}%`;
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 1400);
+    }
+
+    function saveState() {
+      localStorage.setItem(storageKey, JSON.stringify(window.businessDecisions));
+    }
+
+    function loadState() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(storageKey));
+        if (!saved) return;
+        window.businessDecisions = {
+          ...window.businessDecisions,
+          ...saved,
+          economics: { ...defaultEconomics, ...(saved.economics || {}) }
+        };
+      } catch (error) {
+        localStorage.removeItem(storageKey);
+      }
+    }
+
+    function updateProgress() {
+      const progress = ((currentSlide + 1) / slides.length) * 100;
+      progressFill.style.width = `${progress}%`;
+      progressMeta.textContent = `Slide ${currentSlide + 1} of ${slides.length}`;
+      slideName.textContent = slides[currentSlide].dataset.title || "";
+      prevBtn.disabled = currentSlide === 0;
+      nextBtn.textContent = currentSlide === slides.length - 1 ? "Finish" : "Next";
+    }
+
+    function showSlide(index) {
+      currentSlide = Math.max(0, Math.min(index, slides.length - 1));
+      slides.forEach((slide, slideIndex) => slide.classList.toggle("active", slideIndex === currentSlide));
+      updateProgress();
+    }
+
+    function selectDecision(group, value, multiple) {
+      const decisions = window.businessDecisions;
+      if (multiple) {
+        const current = Array.isArray(decisions[group]) ? decisions[group] : [];
+        decisions[group] = current.includes(value)
+          ? current.filter(item => item !== value)
+          : [...current, value];
+      } else {
+        decisions[group] = value;
+      }
+      saveState();
+      renderDecisionChoices();
+      updateMockups();
+      showToast("Decision saved");
+    }
+
+    function renderDecisionChoices() {
+      document.querySelectorAll("[data-decision]").forEach(container => {
+        const key = container.dataset.decision;
+        const isMultiple = container.dataset.multiple === "true";
+        const stored = window.businessDecisions[key];
+        container.querySelectorAll(".choice").forEach(choice => {
+          const value = choice.dataset.value;
+          const selected = isMultiple ? Array.isArray(stored) && stored.includes(value) : stored === value;
+          choice.classList.toggle("selected", selected);
+        });
+      });
+    }
+
+    function calculateEconomics() {
+      const e = window.businessDecisions.economics;
+      const revenue = e.sell_per_lb * e.avg_weight;
+      const cost_meat = e.cost_per_lb * e.avg_weight;
+      const payment_fee = revenue * (e.payment_fee_percent / 100);
+      const loss_cost = revenue * (e.loss_percent / 100);
+      const total_cost = cost_meat + e.packaging_cost + e.delivery_cost + payment_fee + loss_cost;
+      const profit = revenue - total_cost;
+      const margin_percent = revenue > 0 ? (profit / revenue) * 100 : 0;
+
+      window.businessDecisions.calculations = {
+        revenue,
+        cost_meat,
+        payment_fee,
+        loss_cost,
+        total_cost,
+        profit,
+        margin_percent
+      };
+
+      document.getElementById("revenueMetric").textContent = money(revenue);
+      document.getElementById("costMetric").textContent = money(total_cost);
+      document.getElementById("profitMetric").textContent = money(profit);
+      document.getElementById("marginMetric").textContent = percent(margin_percent);
+
+      const healthBox = document.getElementById("healthBox");
+      const healthLabel = document.getElementById("healthLabel");
+      healthBox.classList.remove("healthy", "attention", "risky");
+      if (margin_percent > 40) {
+        healthBox.classList.add("healthy");
+        healthLabel.textContent = "Healthy margin";
+      } else if (margin_percent >= 20) {
+        healthBox.classList.add("attention");
+        healthLabel.textContent = "Attention margin";
+      } else {
+        healthBox.classList.add("risky");
+        healthLabel.textContent = "Risky margin";
+      }
+
+      updateMockups();
+      saveState();
+    }
+
+    function renderEconomicsInputs() {
+      document.querySelectorAll("[data-econ]").forEach(input => {
+        const key = input.dataset.econ;
+        input.value = window.businessDecisions.economics[key];
+      });
+    }
+
+    function shortCutName(cut) {
+      return cut === "New York Strip" ? "NY Strip" : cut || "NY Strip";
+    }
+
+    function updateMockups() {
+      const e = window.businessDecisions.economics;
+      const c = window.businessDecisions.calculations;
+      const cut = window.businessDecisions.cut || "New York Strip";
+      const subscribers = Number(window.businessDecisions.pilotCustomers || 50);
+      const cycleRevenue = (c.revenue || 0) * subscribers;
+      const cycleCost = (c.total_cost || 0) * subscribers;
+
+      document.getElementById("mockCut").textContent = cut;
+      document.getElementById("mockSubCut").textContent = cut;
+      document.getElementById("mockWeight").textContent = `${Number(e.avg_weight || 0).toFixed(1)} lbs`;
+      document.getElementById("dashSubscribers").textContent = subscribers;
+      document.getElementById("dashRevenue").textContent = compactMoney(cycleRevenue);
+      document.getElementById("dashCost").textContent = compactMoney(cycleCost);
+      document.getElementById("dashMargin").textContent = percent(c.margin_percent || 0);
+      document.getElementById("dashOrders").textContent = subscribers;
+      document.getElementById("unitCut").textContent = cut;
+      document.getElementById("unitCost").textContent = money(e.cost_per_lb);
+      document.getElementById("unitPrice").textContent = money(e.sell_per_lb);
+      document.getElementById("unitMargin").textContent = percent(c.margin_percent || 0);
+      ["rowCutA", "rowCutB", "rowCutC", "rowCutD"].forEach(id => {
+        document.getElementById(id).textContent = shortCutName(cut);
+      });
+    }
+
+    function compactMoney(value) {
+      if (!Number.isFinite(value)) return "$0";
+      if (value >= 1000) return `$${(value / 1000).toFixed(1)}k`;
+      return money(value);
+    }
+
+    function generatePlan() {
+      const d = window.businessDecisions;
+      const e = d.economics;
+      const c = d.calculations;
+      const audience = Array.isArray(d.audience) && d.audience.length ? d.audience.join(", ") : "not selected";
+      const region = d.region || "not selected";
+      const cut = d.cut || "not selected";
+      const tech = d.technology || "not selected";
+      const pilot = d.pilotCustomers || "not selected";
+      const health = c.margin_percent > 40 ? "healthy" : c.margin_percent >= 20 ? "attention" : "risky";
+
+      const plan = `SMART MEAT CLUB - BUSINESS PLAN
+
+1. Nome
+Smart Meat Club
+
+2. Resumo
+Smart Meat Club is a meat subscription club in the United States built around a simple thesis: consumers can pay less when they buy meat in a smarter format. The business reduces retail markup by combining direct supplier access, whole-piece purchasing, recurring subscriptions, and scheduled delivery.
+
+Positioning:
+"Carne inteligente. Você paga menos porque compra do jeito certo."
+
+3. Público
+Primary pilot audience: ${audience}.
+The first customer segment should be validated through direct outreach, referral loops, and subscription intent before expanding the product line.
+
+4. Região
+Initial launch region: ${region}.
+The pilot should stay geographically concentrated to improve delivery density, simplify support, and accelerate customer feedback.
+
+5. Produto
+Initial product: one whole piece of ${cut}, averaging ${Number(e.avg_weight).toFixed(1)} lbs per box.
+The box includes original packaging, gel pack, delivery packaging, and a QR code with storage, cutting, and cooking guidance.
+
+6. Modelo
+The model is a buying club and subscription, not a traditional online butcher or premium gourmet marketplace. Orders are collected before purchase, supplier buying is planned around demand, and delivery is scheduled in operational batches.
+
+7. Tecnologia
+Recommended pilot technology: ${tech}.
+Technology should support payment, subscription visibility, customer education, and basic operations without overbuilding the first version.
+
+8. Unit economics
+Cost per lb: ${money(e.cost_per_lb)}
+Sell per lb: ${money(e.sell_per_lb)}
+Average weight: ${Number(e.avg_weight).toFixed(1)} lbs
+Revenue per box: ${money(c.revenue)}
+Meat cost: ${money(c.cost_meat)}
+Packaging cost: ${money(e.packaging_cost)}
+Delivery cost: ${money(e.delivery_cost)}
+Payment fee: ${money(c.payment_fee)}
+Loss reserve: ${money(c.loss_cost)}
+Total cost per box: ${money(c.total_cost)}
+Profit per box: ${money(c.profit)}
+
+9. Margem
+Estimated contribution margin: ${percent(c.margin_percent)}.
+Margin status: ${health}.
+
+10. Custos
+The core cost categories to track are meat cost, packaging, gel pack, delivery, payment fee, loss, storage, marketing, and operations. These should be reviewed after every pilot cycle.
+
+11. Estratégia
+Start with one cut, one region, one delivery cadence, and ${pilot} pilot customers. The strongest validation signals are paid subscriptions, low cancellation, referral behavior, predictable supplier fulfillment, and actual margin after delivery and losses.
+
+12. Próximos passos
+1. Confirm supplier price and availability for ${cut}.
+2. Define the first delivery zone in ${region}.
+3. Recruit ${pilot} pilot subscribers from the selected audience.
+4. Launch the simplest acceptable ${tech} flow.
+5. Run one controlled delivery cycle.
+6. Compare actual margin to the simulated ${percent(c.margin_percent)} margin.
+7. Decide whether to repeat, adjust price, change cut, or expand route density.`;
+
+      planOutput.textContent = plan;
+      saveState();
+      showToast("Business plan generated");
+    }
+
+    document.querySelectorAll("[data-go-next]").forEach(button => {
+      button.addEventListener("click", () => showSlide(currentSlide + 1));
+    });
+
+    document.querySelectorAll("[data-decision]").forEach(container => {
+      const isMultiple = container.dataset.multiple === "true";
+      const group = container.dataset.decision;
+      container.addEventListener("click", event => {
+        const choice = event.target.closest(".choice");
+        if (!choice) return;
+        selectDecision(group, choice.dataset.value, isMultiple);
+      });
+    });
+
+    document.querySelectorAll("[data-econ]").forEach(input => {
+      input.addEventListener("input", event => {
+        const key = event.target.dataset.econ;
+        window.businessDecisions.economics[key] = Number(event.target.value) || 0;
+        calculateEconomics();
+      });
+    });
+
+    document.querySelectorAll("[data-app-tab]").forEach(tab => {
+      tab.addEventListener("click", () => {
+        const target = tab.dataset.appTab;
+        document.querySelectorAll("[data-app-tab]").forEach(item => item.classList.toggle("active", item === tab));
+        document.querySelectorAll("[data-app-panel]").forEach(panel => {
+          panel.classList.toggle("active", panel.dataset.appPanel === target);
+        });
+      });
+    });
+
+    prevBtn.addEventListener("click", () => showSlide(currentSlide - 1));
+    nextBtn.addEventListener("click", () => showSlide(currentSlide + 1));
+    document.getElementById("generatePlanBtn").addEventListener("click", generatePlan);
+
+    document.getElementById("copyPlanBtn").addEventListener("click", async () => {
+      const text = planOutput.textContent.trim();
+      if (!text || text.startsWith("Click Generate")) {
+        generatePlan();
+      }
+      try {
+        await navigator.clipboard.writeText(planOutput.textContent);
+        showToast("Plan copied");
+      } catch (error) {
+        showToast("Copy blocked by browser");
+      }
+    });
+
+    resetBtn.addEventListener("click", () => {
+      localStorage.removeItem(storageKey);
+      window.businessDecisions = {
+        audience: [],
+        region: "",
+        cut: "",
+        technology: "",
+        pilotCustomers: "",
+        economics: { ...defaultEconomics },
+        calculations: {}
+      };
+      planOutput.textContent = "Click Generate Business Plan to consolidate the current decisions.";
+      renderEconomicsInputs();
+      calculateEconomics();
+      renderDecisionChoices();
+      showSlide(0);
+      showToast("Presentation reset");
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "ArrowRight") showSlide(currentSlide + 1);
+      if (event.key === "ArrowLeft") showSlide(currentSlide - 1);
+    });
+
+    loadState();
+    renderEconomicsInputs();
+    calculateEconomics();
+    renderDecisionChoices();
+    showSlide(0);
+  </script>
+</body>
+</html>
