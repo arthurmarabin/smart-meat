@@ -85,3 +85,13 @@ Quando houver conflito entre arquivos, este arquivo orienta a leitura inicial e 
 - Marabin Method: v2.0.0.
 - Data de concepcao: 2026-05-24.
 - Atualize este arquivo quando mudar identidade, canal primario, NSM, starter-kit, extensions ou Fase 11.
+
+## Pasta única por repositório
+
+Regra de Arthur (04/11/2026), válida para qualquer agente e ferramenta.
+
+- A pasta local de projetos de Arthur tem uma pasta por repositório do GitHub, com o nome do repositório, e nenhuma outra. Não criar ali pasta de entrega, edição, rotação, projeção ou cópia.
+- Todo trabalho deste projeto fica dentro deste repositório, no lugar que a metodologia dele define. Na dúvida sobre o lugar, perguntar a Arthur antes de criar a pasta.
+- Trabalho que cruza vários projetos é dividido por projeto desde o início. Ferramenta usada por vários projetos fica no ArthurOS.
+- Mídia, arquivo pesado e prova local ficam dentro do repositório, fora do Git, por regra no `.gitignore`. Temporário fica na pasta temporária da sessão, e worktree só em `.claude/worktrees/`.
+- Valor de credencial só existe no cofre de credenciais e no serviço que a usa, nunca em pasta local, repositório, log ou chat.
